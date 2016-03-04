@@ -111,3 +111,11 @@ function receipt(receiptItems) {
 
   return result;
 }
+
+function printReceipt(tags) {
+  var cartItems = getCartItems(tags);
+  var receiptItems = getReceiptItems(cartItems);
+  var result = receipt(receiptItems);
+
+  console.log(result);
+}
