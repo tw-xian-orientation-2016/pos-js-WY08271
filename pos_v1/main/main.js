@@ -88,3 +88,26 @@ function getBuyTwoGetOnePromotions() {
 
   return discountBarcodes;
 }
+
+function formatPrice(price) {
+  return price.toFixed(2);
+}
+
+function receipt(receiptItems) {
+  var result = '***<没钱赚商店>收据***\n';
+  var amount = 0;
+  var saveAmount = 0;
+
+  receiptItems.forEach(function (receiptItem) {
+    var item = receiptItem.cartItem.item;
+    result += '名称：' + item.name + '，数量：' + receiptItem.cartItem.count + item.unit + '，单价：' + formatPrice(item.price) + '(元)，小计：' + formatPrice(receiptItem.subTotal) + '(元)\n';
+    amount += receiptItem.subTotal;
+    saveAmount += receiptItem.saveSubTotal;
+  });
+
+  result += '----------------------\n' + '总计：' + formatPrice(amount) + '(元)\n' +
+    '节省：' + formatPrice(saveAmount) + '(元)\n' +
+    '**********************';
+
+  return result;
+}
