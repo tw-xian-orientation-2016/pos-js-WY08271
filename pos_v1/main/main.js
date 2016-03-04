@@ -37,3 +37,54 @@ function findBarcode(barcode, cartItems) {
     }
   }
 }
+
+function getReceiptItems(cartItems) {
+  var receiptItems = [];
+
+  cartItems.forEach(function (cartItem) {
+    var saveSubTotal = getSaveSubTotal(cartItem);
+    receiptItems.push({
+      cartItem: cartItem,
+      saveSubTotal: getSaveSubTotal(cartItem),
+      subTotal: getSubTotal(cartItem, saveSubTotal)
+    });
+  });
+
+  return receiptItems;
+}
+
+function getSubTotal(cartItem, saveSubTotal) {
+  return cartItem.item.price * cartItem.count - saveSubTotal;
+}
+
+function getSaveSubTotal(cartItem) {
+  var saveCount = isDiscount(cartItem) ? Math.floor(cartItem.count / 3) : 0;
+
+  return cartItem.item.price * saveCount;
+}
+
+function isDiscount(cartItem) {
+  var discountBarcodes = getBuyTwoGetOnePromotions();
+  var isExist = false;
+
+  discountBarcodes.forEach(function (discountBarcode) {
+    if (discountBarcode === cartItem.item.barcode) {
+      isExist = true;
+    }
+  });
+
+  return isExist;
+}
+
+function getBuyTwoGetOnePromotions() {
+  var promotions = loadPromotions();
+  var discountBarcodes;
+
+  promotions.forEach(function (promotion) {
+    if (promotion.type === 'BUY_TWO_GET_ONE_FREE') {
+      discountBarcodes = promotion.barcodes;
+    }
+  });
+
+  return discountBarcodes;
+}
