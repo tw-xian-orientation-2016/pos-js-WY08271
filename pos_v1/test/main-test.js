@@ -1,8 +1,8 @@
-describe('pos', function() {
+describe('pos', function () {
   var allItems;
   var inputs;
 
-  beforeEach(function() {
+  beforeEach(function () {
     allItems = loadAllItems();
     inputs = [
       'ITEM000001',
@@ -17,7 +17,7 @@ describe('pos', function() {
     ];
   });
 
-  it('should print correct text', function() {
+  it('should print correct text', function () {
 
     spyOn(console, 'log');
 
@@ -37,12 +37,12 @@ describe('pos', function() {
   });
 });
 
-describe('#getCartItems()', function() {
+describe('getCartItems()', function () {
   var tags;
   var cartItems;
   var allItems;
 
-  beforeEach(function() {
+  beforeEach(function () {
     allItems = loadAllItems();
     tags = [
       'ITEM000001',
@@ -58,7 +58,7 @@ describe('#getCartItems()', function() {
     cartItems = getCartItems(tags);
   });
 
-  it("can split barcode and count", function() {
+  it("can split barcode and count", function () {
     var count;
     for (v of cartItems) {
       if (v.item.barcode === 'ITEM000003') {
@@ -69,7 +69,7 @@ describe('#getCartItems()', function() {
     expect(count).toBe(2);
   });
 
-  it("can merge same barcodes", function() {
+  it("can merge same barcodes", function () {
     for (v of cartItems) {
       if (v.item.barcode === 'ITEM000005') {
         var count = v.count;
@@ -78,7 +78,7 @@ describe('#getCartItems()', function() {
     expect(count).toBe(3);
   });
 
-  it('can accord barcode find item', function() {
+  it('can accord barcode find item', function () {
     var expectResult = [{
       item: {
         barcode: 'ITEM000001',
@@ -109,3 +109,79 @@ describe('#getCartItems()', function() {
   });
 });
 
+describe('getReceiptItems()', function () {
+  var cartItems;
+  var promotions;
+
+  beforeEach(function () {
+    promotions = loadPromotions();
+    cartItems = [{
+      item: {
+        barcode: 'ITEM000001',
+        name: '雪碧',
+        unit: '瓶',
+        price: 3.00
+      },
+      count: 5
+    }, {
+      item: {
+        barcode: 'ITEM000003',
+        name: '荔枝',
+        unit: '斤',
+        price: 15.00
+      },
+      count: 2
+    }, {
+      item: {
+        barcode: 'ITEM000005',
+        name: '方便面',
+        unit: '袋',
+        price: 4.50
+      },
+      count: 3
+    }];
+  });
+
+  it('can calculate every item subTotal and saveSubTotal', function () {
+    var results = getReceiptItems(cartItems);
+    var expectResult = [{
+      cartItem: {
+        item: {
+          barcode: 'ITEM000001',
+          name: '雪碧',
+          unit: '瓶',
+          price: 3.00
+        },
+        count: 5
+      },
+      subTotal: 12,
+      saveSubTotal: 3
+    }, {
+      cartItem: {
+        item: {
+          barcode: 'ITEM000003',
+          name: '荔枝',
+          unit: '斤',
+          price: 15.00
+        },
+        count: 2
+      },
+      subTotal: 30,
+      saveSubTotal: 0
+    }, {
+      cartItem: {
+        item: {
+          barcode: 'ITEM000005',
+          name: '方便面',
+          unit: '袋',
+          price: 4.50
+        },
+        count: 3
+      },
+      subTotal: 9,
+      saveSubTotal: 4.5
+    }];
+
+    expect(results).toEqual(expectResult);
+  });
+});
