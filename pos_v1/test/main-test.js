@@ -36,3 +36,76 @@ describe('pos', function() {
     expect(console.log).toHaveBeenCalledWith(expectText);
   });
 });
+
+describe('#getCartItems()', function() {
+  var tags;
+  var cartItems;
+  var allItems;
+
+  beforeEach(function() {
+    allItems = loadAllItems();
+    tags = [
+      'ITEM000001',
+      'ITEM000001',
+      'ITEM000001',
+      'ITEM000001',
+      'ITEM000001',
+      'ITEM000003-2',
+      'ITEM000005',
+      'ITEM000005',
+      'ITEM000005'
+    ];
+    cartItems = getCartItems(tags);
+  });
+
+  it("can split barcode and count", function() {
+    var count;
+    for (v of cartItems) {
+      if (v.item.barcode === 'ITEM000003') {
+        count = v.count;
+      }
+    }
+
+    expect(count).toBe(2);
+  });
+
+  it("can merge same barcodes", function() {
+    for (v of cartItems) {
+      if (v.item.barcode === 'ITEM000005') {
+        var count = v.count;
+      }
+    }
+    expect(count).toBe(3);
+  });
+
+  it('can accord barcode find item', function() {
+    var expectResult = [{
+      item: {
+        barcode: 'ITEM000001',
+        name: '雪碧',
+        unit: '瓶',
+        price: 3.00
+      },
+      count: 5
+    }, {
+      item: {
+        barcode: 'ITEM000003',
+        name: '荔枝',
+        unit: '斤',
+        price: 15.00
+      },
+      count: 2
+    }, {
+      item: {
+        barcode: 'ITEM000005',
+        name: '方便面',
+        unit: '袋',
+        price: 4.50
+      },
+      count: 3
+    }];
+
+    expect(cartItems).toEqual(expectResult);
+  });
+});
+
